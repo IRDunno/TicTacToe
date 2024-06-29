@@ -4,7 +4,7 @@ const HomePage = () => {
   return (
     <div className="mt-20">
       <header className="text-center space-y-3">
-        <h1 className="text-4xl">Welcome to TicTacToe</h1>
+        <h1 className="text-4xl font-bold">Welcome to TicTacToe</h1>
         <p className="">Choose gamemode</p>
       </header>
       <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-4 px-20">
