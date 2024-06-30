@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import YouWinModal from "./YouWinModal";
 
 const PlayDuoPage = () => {
   const [currentPlayer, setCurrentPlayer] = useState("X");
   const [grid, setGrid] = useState(Array(9).fill(null));
+  const [id, setId] = useState(null);
 
   const handleClick = (index) => {
     if (grid[index]) return;
@@ -10,12 +12,143 @@ const PlayDuoPage = () => {
     const newGrid = [...grid];
     newGrid[index] = currentPlayer;
     setGrid(newGrid);
+    setId(index);
 
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
 
+  useEffect(() => {
+    checkGrids(id);
+  }, [grid, id]);
+
+  const checkGrids = (index) => {
+    switch (index) {
+      case 0:
+        if (grid[index] == grid[index + 1] && grid[index] == grid[index + 2]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index + 3] &&
+          grid[index] == grid[index + 6]
+        ) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index + 4] &&
+          grid[index] == grid[index + 8]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 1:
+        if (grid[index] == grid[index - 1] && grid[index] == grid[index + 1]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index + 3] &&
+          grid[index] == grid[index + 6]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 2:
+        if (grid[index] == grid[index - 1] && grid[index] == grid[index - 2]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index + 3] &&
+          grid[index] == grid[index + 6]
+        ) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index + 2] &&
+          grid[index] == grid[index + 4]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 3:
+        if (grid[index] == grid[index - 3] && grid[index] == grid[index + 3]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index + 1] &&
+          grid[index] == grid[index + 2]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 4:
+        if (grid[index] == grid[index - 3] && grid[index] == grid[index + 3]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 1] &&
+          grid[index] == grid[index + 1]
+        ) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 4] &&
+          grid[index] == grid[index + 4]
+        ) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 2] &&
+          grid[index] == grid[index + 2]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 5:
+        if (grid[index] == grid[index - 3] && grid[index] == grid[index + 3]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 1] &&
+          grid[index] == grid[index - 2]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 6:
+        if (grid[index] == grid[index + 1] && grid[index] == grid[index + 2]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 2] &&
+          grid[index] == grid[index - 4]
+        ) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 3] &&
+          grid[index] == grid[index - 6]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 7:
+        if (grid[index] == grid[index + 1] && grid[index] == grid[index - 1]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 3] &&
+          grid[index] == grid[index - 6]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+      case 8:
+        if (grid[index] == grid[index - 2] && grid[index] == grid[index - 1]) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 3] &&
+          grid[index] == grid[index - 6]
+        ) {
+          document.getElementById("WinModal").showModal();
+        } else if (
+          grid[index] == grid[index - 4] &&
+          grid[index] == grid[index - 8]
+        ) {
+          document.getElementById("WinModal").showModal();
+        }
+        break;
+    }
+  };
+
   return (
     <>
+      <YouWinModal player={currentPlayer === "X" ? "O" : "X"} setGrid={setGrid} />
       <header className="text-center space-y-3">
         <h1 className="text-4xl font-bold">Play Duo</h1>
         <p>Defeat one another!</p>
