@@ -9,6 +9,7 @@ import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AboutPage from "./pages/AboutPage";
+import PlayDuoPage from "./pages/PlayDuoPage";
 
 function App() {
   const router = createBrowserRouter(
@@ -16,6 +17,7 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/play-duo" element={<PlayDuoPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     )

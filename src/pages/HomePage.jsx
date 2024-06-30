@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
@@ -13,7 +14,7 @@ const HomePage = () => {
             <h2 className="card-title">Duo</h2>
             <p>Play with your friend on the same computer</p>
             <div className="card-actions justify-end">
-              <button className="btn btn-muted">Play Now</button>
+              <Link to="/play-duo" className="btn btn-muted">Play Now</Link>
             </div>
           </div>
         </div>
@@ -22,7 +23,7 @@ const HomePage = () => {
             <h2 className="card-title">Online</h2>
             <p>Play online against other players</p>
             <div className="card-actions justify-end">
-              <button className="btn btn-muted">Play Now</button>
+              <Link to="/play-multiplayer" className="btn btn-muted">Play Now</Link>
             </div>
           </div>
         </div>
