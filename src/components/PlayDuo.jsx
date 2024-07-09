@@ -24,7 +24,6 @@ const PlayDuoPage = () => {
       ];
 
       for (let combination of winningCombinations) {
-        console.log(combination)
         const [a, b, c] = combination;
         if (grid[a] && grid[a] === grid[b] && grid[a] === grid[c]) {
           return grid[a];
@@ -54,6 +53,7 @@ const PlayDuoPage = () => {
         player={currentPlayer === "X" ? "O" : "X"}
         setGrid={setGrid}
         isFull={winner === "Draw"}
+        setWinner={setWinner}
       />
       <header className="text-center space-y-3">
         <h1 className="text-4xl font-bold">Play Duo</h1>
