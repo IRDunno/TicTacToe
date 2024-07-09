@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import YouWinModal from "./YouWinModal";
+import ScoreDisplay from "./ScoreDisplay";
 
 const PlayDuoPage = () => {
   const [currentPlayer, setCurrentPlayer] = useState("X");
@@ -69,6 +70,8 @@ const PlayDuoPage = () => {
         <h1 className="text-4xl font-bold">Play Duo</h1>
         <p>Defeat one another!</p>
       </header>
+
+      <ScoreDisplay score={score} />
       <div className="mt-10 grid grid-cols-3 gap-2 mx-auto p-7 text-center border-slate-500 max-w-xs">
         {grid.map((cell, index) => (
           <div
