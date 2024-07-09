@@ -5,9 +5,10 @@ const PlayDuoPage = () => {
   const [currentPlayer, setCurrentPlayer] = useState("X");
   const [grid, setGrid] = useState(Array(9).fill(null));
   const [winner, setWinner] = useState(null);
+  const [score, setScore] = useState({ X: 0, O: 0 });
 
   const handleClick = (index) => {
-    if (grid[index] || winner) return; // Prevent overwriting a cell or playing after game is won
+    if (grid[index] || winner) return;
 
     const newGrid = [...grid];
     newGrid[index] = currentPlayer;
@@ -18,14 +19,23 @@ const PlayDuoPage = () => {
   useEffect(() => {
     const checkWinner = () => {
       const winningCombinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-        [0, 4, 8], [2, 4, 6]             // Diagonals
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8], // Rows
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8], // Columns
+        [0, 4, 8],
+        [2, 4, 6], // Diagonals
       ];
 
       for (let combination of winningCombinations) {
         const [a, b, c] = combination;
         if (grid[a] && grid[a] === grid[b] && grid[a] === grid[c]) {
+          const newScore = { ...score };
+          newScore[grid[a]] += 1;
+          setScore(newScore);
+
           return grid[a];
         }
       }
@@ -34,7 +44,7 @@ const PlayDuoPage = () => {
     };
 
     const checkFull = () => {
-      return grid.every(cell => cell !== null);
+      return grid.every((cell) => cell !== null);
     };
 
     const winner = checkWinner();
