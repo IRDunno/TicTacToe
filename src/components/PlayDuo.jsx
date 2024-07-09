@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import YouWinModal from "./YouWinModal";
 import ScoreDisplay from "./ScoreDisplay";
+import ResetGameButton from "./ResetGameButton";
 
 const PlayDuoPage = () => {
   const [currentPlayer, setCurrentPlayer] = useState("X");
@@ -83,6 +84,8 @@ const PlayDuoPage = () => {
           </div>
         ))}
       </div>
+
+      <ResetGameButton setGrid={setGrid} setScore={setScore} />
     </>
   );
 };
