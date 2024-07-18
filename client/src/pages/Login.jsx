@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import LoginCard from "../components/LoginCard";
 
 const Login = () => {
   return (
-    <div>Login</div>
-  )
-}
+    <div className="flex">
+      <LoginCard />
+    </div>
+  );
+};
 
-export default Login
+export default Login;
