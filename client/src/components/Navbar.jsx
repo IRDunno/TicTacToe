@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import { FaDoorClosed } from "react-icons/fa";
 
 const Navbar = () => {
   return (
@@ -39,16 +40,36 @@ const Navbar = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <Link to="/" className="btn btn-ghost text-xl">TicTacToe</Link>
+        <Link to="/" className="btn btn-ghost text-xl">
+          TicTacToe
+        </Link>
       </div>
       <div className="navbar-end">
-        <button className="btn btn-ghost btn-circle">
-          <div className="avatar placeholder">
-            <div className="bg-neutral text-neutral-content w-8 rounded-full">
-              <span className="text-sm">UI</span>
+        <div className="dropdown dropdown-end">
+          {/* <button className="btn btn-ghost btn-circle">
+            <div className="avatar placeholder">
+              <div className="bg-neutral text-neutral-content w-8 rounded-full">
+                <span className="text-sm">
+                  <FaDoorClosed />
+                </span>
+              </div>
             </div>
-          </div>
-        </button>
+          </button> */}
+
+          <button className="btn btn-ghost">
+            <div className="flex flex-row gap-2 items-center">
+              <FaDoorClosed /> <span>Guest</span>
+            </div>
+          </button>
+          <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+            <li>
+              <NavLink to="/login">Login</NavLink>
+            </li>
+            <li>
+              <NavLink to="/register">Register</NavLink>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
