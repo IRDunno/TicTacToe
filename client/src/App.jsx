@@ -12,6 +12,7 @@ import AboutPage from "./pages/AboutPage";
 import PlayDuoPage from "./pages/PlayDuoPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const router = createBrowserRouter(
@@ -22,6 +23,7 @@ function App() {
         <Route path="/play-duo" element={<PlayDuoPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     )
