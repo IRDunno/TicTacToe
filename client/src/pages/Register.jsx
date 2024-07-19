@@ -3,10 +3,8 @@ import RegisterCard from "../components/RegisterCard";
 
 const Register = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3">
-      <div></div>
+    <div className="flex justify-center items-center">
       <RegisterCard />
-      <div></div>
     </div>
   );
 };

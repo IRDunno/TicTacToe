@@ -2,7 +2,7 @@ import React from 'react'
 
 const RegisterCard = () => {
   return (
-    <div className="bg-base-100 my-28 mx-10 p-14 shadow-xl rounded-xl lg:mx-0 md:mx-28">
+    <div className="bg-base-100 my-28 mx-10 p-14 shadow-xl rounded-xl lg:mx-0 md:mx-28 w-[500px]">
       <h1 className="text-3xl font-medium text-center">REGISTER</h1>
       <div className="grid grid-rows-2 gap-2 mt-10">
         <label className="form-control w-full">
