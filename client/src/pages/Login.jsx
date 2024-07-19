@@ -3,8 +3,10 @@ import LoginCard from "../components/LoginCard";
 
 const Login = () => {
   return (
-    <div className="flex">
+    <div className="grid grid-cols-1 lg:grid-cols-3">
+      <div></div>
       <LoginCard />
+      <div></div>
     </div>
   );
 };
