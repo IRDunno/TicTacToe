@@ -23,6 +23,8 @@ const RegisterCard = () => {
 
       if (response.ok) {
         toast.success("User registered successfully!");
+        setUsername("");
+        setPassword("");
       } else {
         const data = await response.json();
         toast.error(data.message || "Registration failed.");
@@ -50,6 +52,7 @@ const RegisterCard = () => {
               value={username}
               className="input input-bordered w-full"
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </label>
           <label className="form-control w-full">
@@ -61,6 +64,7 @@ const RegisterCard = () => {
               value={password}
               className="input input-bordered w-full"
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </label>
         </div>
