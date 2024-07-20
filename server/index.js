@@ -14,6 +14,15 @@ app.post("/register", async (req, res) => {
     const { username, password } = req.body;
     const currentDate = new Date();
 
+    const userCheck = await pool.query(
+      "SELECT * FROM users WHERE username = $1",
+      [username]
+    );
+
+    if (userCheck.rows.length > 0) {
+      return res.status(400).send({ message: "Username is already taken." });
+    }
+
     const register = await pool.query(
       "INSERT INTO users (username, password, datecreated, dateupdated) VALUES ($1, $2, $3, $4) RETURNING *",
       [username, password, currentDate, currentDate]
@@ -21,7 +30,10 @@ app.post("/register", async (req, res) => {
 
     res
       .status(201)
-      .send({ message: "User registered successfully!", data: register });
+      .send({
+        message: "User registered successfully!",
+        data: register.rows[0],
+      });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "An error occurred during registration." });

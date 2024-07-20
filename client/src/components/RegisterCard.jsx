@@ -1,17 +1,36 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const RegisterCard = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const registerForm = (e) => {
+  const registerForm = async (e) => {
     e.preventDefault();
 
     const newUser = {
       username,
       password,
     };
+
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
+
+      if (response.ok) {
+        toast.success("User registered successfully!");
+      } else {
+        const data = await response.json();
+        toast.error(data.message || "Registration failed.");
+      }
+    } catch (error) {
+      toast.error("An error occurred during registration.");
+      console.log(error.message);
+    }
   };
 
   return (
@@ -50,11 +69,8 @@ const RegisterCard = () => {
         </div>
       </form>
       <div className="text-end pr-1">
-        <Link
-          to="/login"
-          className="label-text cursor-pointer hover:underline"
-        >
-          Alreay has an account? Sign in!
+        <Link to="/login" className="label-text cursor-pointer hover:underline">
+          Already has an account? Sign in!
         </Link>
       </div>
     </div>
