@@ -4,8 +4,16 @@ const Account = require("../models/account.model");
 // Create account
 router.post("/", async (req, res) => {
   try {
+    const exists = await Account.findOne({
+      where: { username: req.body.username },
+    });
+
+    if (exists) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
     const account = await Account.create(req.body);
-    res.status(200).json(user);
+    res.status(201).json(account);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

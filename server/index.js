@@ -17,7 +17,7 @@ const PORT = 5000;
 
 const run = async () => {
   try {
-    await sequelize.sync({force: true});
+    await sequelize.sync();
     console.log("Database & tables created!");
 
     app.listen(PORT, () => {
