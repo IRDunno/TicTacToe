@@ -1,105 +1,31 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
-const pool = require("./db");
+const sequelize = require("./db");
 
+// get routes
+const accountRoutes = require("./routes/account.route");
+
+// middlewares
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// routes
+app.use("/api/accounts", accountRoutes);
 
-// register
-app.post("/register", async (req, res) => {
+const PORT = 5000;
+
+const run = async () => {
   try {
-    const { username, password } = req.body;
-    const currentDate = new Date();
+    await sequelize.sync({force: true});
+    console.log("Database & tables created!");
 
-    const userCheck = await pool.query(
-      "SELECT * FROM users WHERE username = $1",
-      [username]
-    );
-
-    if (userCheck.rows.length > 0) {
-      return res.status(400).send({ message: "Username is already taken." });
-    }
-
-    const register = await pool.query(
-      "INSERT INTO users (username, password, datecreated, dateupdated) VALUES ($1, $2, $3, $4) RETURNING *",
-      [username, password, currentDate, currentDate]
-    );
-
-    res
-      .status(201)
-      .send({
-        message: "User registered successfully!",
-        data: register.rows[0],
-      });
+    app.listen(PORT, () => {
+      console.log(`Server has started on port ${PORT}`);
+    });
   } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "An error occurred during registration." });
+    console.error("Unable to create tables or insert data:", error);
   }
-});
+};
 
-// get all users
-app.get("/users", async (req, res) => {
-  try {
-    const getAllUsers = await pool.query("SELECT * FROM users");
-
-    res.status(200).send({ data: getAllUsers.rows });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "An error occured fetching users" });
-  }
-});
-
-// get a user
-app.get("/users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const getUser = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-
-    res.status(200).send({ data: getUser.rows[0] });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "An error occured fetching user" });
-  }
-});
-
-// update a user
-app.put("/users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { username, password } = req.body;
-    const currentDate = new Date();
-
-    const updateUser = await pool.query(
-      "UPDATE users SET username = $1, password = $2, dateupdated = $3 WHERE id = $4",
-      [username, password, currentDate, id]
-    );
-
-    res.status(200).send({ message: "User updated" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "An error occured updating user" });
-  }
-});
-
-// delete a user
-app.delete("/users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const deleteUser = await pool.query("DELETE FROM users WHERE id = $1", [
-      id,
-    ]);
-
-    res.status(200).send({ message: "User deleted" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "An error occured deleting user" });
-  }
-});
-
-app.listen(5000, () => {
-  console.log("server has started on port 5000");
-});
+run();
