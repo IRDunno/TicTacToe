@@ -1,36 +1,26 @@
-const usersDB = {
-  users: require("../models/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-
-const fsPromises = require("fs").promises;
-const path = require("path");
-const bcrypt = require("bcrypt");
+const User = require("../models/User.js");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const register = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
     return res
       .status(400)
-      .json({ message: "Username and password are required" });
-  const duplicate = usersDB.users.find((user) => user.username === username);
-  if (duplicate) return res.sendStatus(409); // 409 - Conflict status
+      .json({ success: false, message: "Username and password are required" });
+
+  const duplicate = await User.findOne({ username }).exec();
+  if (duplicate)
+    return res
+      .status(409) // 409 - Conflict status
+      .json({ success: false, message: "Username already exists" });
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { username: username, password: hashedPassword };
-    usersDB.setUsers([...usersDB.users, newUser]);
-    await fsPromises.writeFile(
-      path.join(__dirname, "..", "models", "users.json"),
-      JSON.stringify(usersDB.users)
-    );
+    const result = await User.create(req.body);
     res
       .status(201)
-      .json({ success: true, message: "User created", data: usersDB.users });
+      .json({ success: true, message: "User created", data: result });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -39,9 +29,9 @@ const login = async (req, res) => {
   if (!username || !password)
     return res
       .status(400)
-      .json({ message: "Username and password are required" });
+      .json({ success: false, message: "Username and password are required" });
 
-  const foundUser = usersDB.users.find((user) => user.username === username);
+  const foundUser = await User.findOne({ username }).exec();
   if (!foundUser)
     return res
       .status(401)
@@ -55,75 +45,65 @@ const login = async (req, res) => {
   const accessToken = jwt.sign(
     { username: foundUser.username },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "30s" }
+    { expiresIn: "10m" }
   );
   const refreshToken = jwt.sign(
     { username: foundUser.username },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
   );
-  const otherUsers = usersDB.users.filter(
-    (user) => user.username !== foundUser.username
-  );
-  const currentUser = { ...foundUser, refreshToken };
-  usersDB.setUsers([...otherUsers, currentUser]);
-  await fsPromises.writeFile(
-    path.join(__dirname, "..", "models", "users.json"),
-    JSON.stringify(usersDB.users)
+  const updateUser = await User.findByIdAndUpdate(
+    foundUser.id,
+    { refreshToken },
+    { new: true }
   );
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
-    secure: true,
+    // secure: true,
   });
-  res
-    .status(200)
-    .json({ success: true, message: "User logged in", accessToken });
+  res.status(200).json({
+    success: true,
+    message: "User logged in",
+    accessToken
+  });
 };
 
-const refreshToken = (req, res) => {
+const refreshToken = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(401);
   const refreshToken = cookies.jwt;
 
-  const foundUser = usersDB.users.find(
-    (user) => user.refreshToken === refreshToken
-  );
-  if (!foundUser) return res.sendStatus(403);
+  const foundUser = await User.findOne({ refreshToken });
+  if (!foundUser)
+    return res.status(403).json({ success: false, message: "Forbidden" });
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err || foundUser.username !== decoded.username)
-      return res.sendStatus(403);
+      return res.status(403).json({ success: false, message: "Forbidden" });
     const accessToken = jwt.sign(
       { username: decoded.username },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "30s" }
+      { expiresIn: "10m" }
     );
-    res.json({ accessToken });
+    res.status(200).json({ accessToken });
   });
 };
 
 const logout = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
+  console.log("s")
   const refreshToken = cookies.jwt;
 
-  const foundUser = usersDB.users.find(
-    (user) => user.refreshToken === refreshToken
-  );
+  const foundUser = await User.findOne({ refreshToken });
+  
   if (!foundUser) {
     res.clearCookie("jwt", { httpOnly: true, secure: true });
     return res.sendStatus(204);
   }
 
-  const otherUsers = usersDB.users.filter(
-    (user) => (user.f = refreshToken !== foundUser.refreshToken)
-  );
-  const currentUser = { ...foundUser, refreshToken: "" };
-  usersDB.setUsers([...otherUsers, currentUser]);
-  await fsPromises.writeFile(
-    path.join(__dirname, "..", "models", "users.json"),
-    JSON.stringify(usersDB.users)
-  );
+  foundUser.refreshToken = "";
+  await foundUser.save();
 
   res.clearCookie("jwt", { httpOnly: true, secure: true });
   res.sendStatus(204);

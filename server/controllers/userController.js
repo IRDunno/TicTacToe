@@ -1,73 +1,66 @@
-const data = {
-  users: require("../models/dummy.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
+const User = require("../models/User");
+
+const getAllUsers = async (req, res) => {
+  const users = await User.find({}).exec();
+
+  if (!users) res.sendStatus(404);
+
+  res.status(200).json({ success: true, data: users });
 };
 
-const getAllUsers = (req, res) => {
-  res.json(data.users);
-};
-
-const createNewUser = (req, res) => {
+const createNewUser = async (req, res) => {
   const newUser = {
-    id: data.users?.length ? data.users[data.users.length - 1].id + 1 : 1,
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
+    username: req.body.username,
+    password: req.body.password,
   };
 
-  if (!newUser.firstname || !newUser.lastname) {
+  if (!newUser.username || !newUser.password) {
     return res
       .status(400)
-      .json({ message: "First and last names are required" });
+      .json({ success: false, message: "Username and password is required" });
   }
 
-  data.setUsers([...data.users, newUser]);
-  res.status(201).json(data.users);
+  const user = await User.create(newUser);
+  if (!user) return res.sendStatus(500);
+
+  res.status(201).json({ success: true, data: user });
 };
 
-const updateUser = (req, res) => {
-  const user = data.users.find((user) => user.id === parseInt(req.body.id));
+const updateUser = async (req, res) => {
+  const user = await User.findById(req.body.id).exec();
 
-  if (!user) {
-    return res.status(400).json({
-      message: `User ID ${req.body.id} not found`,
-    });
-  }
-  if (req.body.firstname) user.firstname = req.body.firstname;
-  if (req.body.lastname) user.lastname = req.body.lastname;
-  const filteredArray = data.users.filter(
-    (user) => user.id !== parseInt(req.body.id)
-  );
-  const unsortedArray = [...filteredArray, user];
-  data.setUsers(
-    unsortedArray.sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0))
-  );
-  res.json(data.users);
-};
-
-const deleteUser = (req, res) => {
-  const user = data.users.find((user) => user.id === parseInt(req.body.id));
   if (!user) {
     return res
       .status(400)
-      .json({ message: `User ID ${req.body.id} not found` });
+      .json({ success: false, message: `User ID ${req.body.id} not found` });
   }
-  const filteredArray = data.users.filter(
-    (user) => user.id !== parseInt(req.body.id)
-  );
-  data.setUsers([...filteredArray]);
-  res.json(data.users);
+  if (req.body.username) user.username = req.body.username;
+  if (req.body.password) user.password = req.body.password;
+  const updatedUser = await user.save();
+  if (!updatedUser) return res.sendStatus(500);
+
+  res.status(200).json({ success: true, data: user });
 };
 
-const getUser = (req, res) => {
-  const user = data.users.find((user) => user.id === parseInt(req.params.id));
+const deleteUser = async (req, res) => {
+  const user = await User.findByIdAndDelete(req.body.id);
+  if (!user) {
+    return res
+      .status(400)
+      .json({ success: false, message: `User ID ${req.body.id} not found` });
+  }
+
+  res.status(200).json({ success: true, message: "User deleted" });
+};
+
+const getUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
   if (!user) {
     return res
       .status(400)
       .json({ message: `User ID ${req.body.id} not found` });
   }
-  res.json(user);
+  res.status(200).json({ success: true, data: user });
 };
 
 module.exports = {
