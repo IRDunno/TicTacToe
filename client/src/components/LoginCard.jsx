@@ -69,7 +69,13 @@ const LoginCard = () => {
               </span>
             </div>
           </div>
-          <button className="btn btn-active">Sign in</button>
+          <button className="btn btn-active" disabled={isFetching}>
+            {isFetching ? (
+              <span className="loading loading-spinner loading-md"></span>
+            ) : (
+              "Sign in"
+            )}
+          </button>
         </div>
       </form>
       <div className="text-end pr-1">
