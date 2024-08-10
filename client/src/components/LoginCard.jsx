@@ -1,41 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { loginCall } from "../apiCalls";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginCard = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { user, isFetching, error, dispatch } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
   const loginForm = async (e) => {
     e.preventDefault();
 
-    const user = {
+    const userCredentials = {
       username,
       password,
     };
 
-    try {
-      const response = await fetch("http://localhost:3500/auth/login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-      });
-
-      if (response.ok) {
-        toast.success("User logged in");
-        setUsername("");
-        setPassword("");
-        return navigate("/");
-      } else {
-        const data = await response.json();
-        toast.error(data.message || "Login failed");
-      }
-    } catch (error) {
-      toast.error("An error occured during login");
-      console.log(error.message);
-    }
+    loginCall(userCredentials, dispatch);
   };
 
   return (
