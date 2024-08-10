@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const LoginCard = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const loginForm = async (e) => {
     e.preventDefault();
@@ -25,6 +27,7 @@ const LoginCard = () => {
         toast.success("User logged in");
         setUsername("");
         setPassword("");
+        return navigate("/");
       } else {
         const data = await response.json();
         toast.error(data.message || "Login failed");
