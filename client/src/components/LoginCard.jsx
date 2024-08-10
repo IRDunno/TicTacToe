@@ -20,6 +20,7 @@ const LoginCard = () => {
     };
 
     loginCall(userCredentials, dispatch);
+    console.log(user)
   };
 
   return (
