@@ -5,7 +5,7 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -18,6 +18,10 @@ import { AuthContext } from "./context/AuthContext";
 
 function App() {
   const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
